@@ -2,9 +2,56 @@
 
 NISRA host an online Blaise web collection solution on our behalf. They periodically upload the results to an SFTP server.
 
-This service downloads the data from the SFTP and re-uploads it to a GCP storage bucket, other services will then pickup this data for further processing. 
+This service downloads the data from the SFTP and re-uploads it to a GCP storage bucket, other services will then pickup this data for further processing.
 
 The service can be configured to process data at instrument level or survey level (will process all survey instruments found) via the yaml file. The example yamls in the templates folder are of kind cron so the service can be configured to run on a cron schedule.
+
+### Using poetry to manage dependencies
+
+Docs: <https://python-poetry.org/>
+
+**Install Deps**:
+
+```sh
+pip3 install poetry
+poetry install
+```
+
+**Run pytest**:
+
+```sh
+poetry run python -m pytest
+```
+
+**Run behave**:
+
+```sh
+poetry run behave
+```
+
+**Export deps for AppEngine**:
+
+```sh
+poetry export -f requirements.txt > requirements.txt
+```
+
+**Add a dep**:
+
+```sh
+poetry add <dep_name>
+```
+
+Dev dependencies (not needed in runtime, e.g. pytest)
+
+```sh
+poetry add --dev <dep_name>
+```
+
+**Remove a dep**:
+
+```sh
+poetry remote [--dev] <dep_name>
+```
 
 ### Run Locally
 

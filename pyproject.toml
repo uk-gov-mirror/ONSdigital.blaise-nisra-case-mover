@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "\\"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pybase64 = "^1.1.4"
+requests = "^2.25.1"
+pysftp = "^0.2.9"
+paramiko = "^2.7.2"
+Flask = "^1.1.2"
+google-cloud-core = "^1.6.0"
+google-cloud-storage = "^1.35.1"
+python-dotenv = "^0.15.0"
+
+[tool.poetry.dev-dependencies]
+setuptools = "^53.0.0"
+behave = "^1.2.6"
+pytest = "^6.2.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

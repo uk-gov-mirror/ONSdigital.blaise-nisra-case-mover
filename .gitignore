@@ -114,3 +114,6 @@ venv.bak/
 *.bmix
 *.blix
 processed
+
+# requirements.txt should be built dynmaically using poetry
+requirements.txt
