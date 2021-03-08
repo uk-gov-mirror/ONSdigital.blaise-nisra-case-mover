@@ -1,51 +1,35 @@
 # This step generates the new manifest
 steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Generate manifest
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: Build docker image
     entrypoint: 'bash'
     args:
     - '-c'
     - |
-       sed "s#_PROJECT_ID#${_PROJECT_ID}#g" templates/app.yaml.tpl | \
-       sed "s#_SFTP_HOST#${_SFTP_HOST}#g" | \
-       sed "s#_SFTP_USERNAME#${_SFTP_USERNAME}#g" | \
-       sed "s#_SFTP_PASSWORD#${_SFTP_PASSWORD}#g" | \
-       sed "s#_SURVEY_SOURCE_PATH#${_SURVEY_SOURCE_PATH}#g" | \
-       sed "s#_INSTRUMENT_DESTINATION_PATH#${_INSTRUMENT_DESTINATION_PATH}#g" | \
-       sed "s#_NISRA_BUCKET_NAME#${_NISRA_BUCKET_NAME}#g" > app.yaml
-
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Print Output
-    entrypoint: /bin/sh
-    args:
-      - '-c'
-      - |
-        cat app.yaml
+      gcloud builds submit --tag gcr.io/${_PROJECT_ID}/nisra-case-mover
 
   - name: "gcr.io/cloud-builders/gcloud"
-    id: Deploy service
-    args: ["app", "deploy"]
-    timeout: "1600s"
-
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: Schedule cron job for service
-    args: ["app", "deploy", "cron.yaml"]
-    timeout: "1600s"
-  
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Clean Up Old Versions
+    id: Cloud run deploy
     entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        versions=$(gcloud app versions list --service "tobi-ui" --sort-by '~version' --format 'value(VERSION.ID)' --project "${_PROJECT_ID}" | tail -n +11)
-
-        versions=($versions)  # split to array $versions
-
-        for (( i=0; i<${#versions[@]}; i++ ))
-        do
-          gcloud app versions delete ${versions[$i]} --service "tobi-ui" --project "${_PROJECT_ID}" --quiet
-        done
+    - '-c'
+    - |
+      gcloud run deploy \
+        --image gcr.io/${_PROJECT_ID}/nisra-case-mover \
+        --vpc-connector=vpcconnect \
+        --vpc-egress=all \
+        --region=${_REGION} \
+        --cpu=2 \
+        --memory=512Mi \
+        --max-instances=1 \
+        --set-env-vars SFTP_PORT=${_SFTP_PORT} \
+        --set-env-vars SFTP_HOST=${_SFTP_HOST} \
+        --set-env-vars SFTP_USERNAME=${_SFTP_USERNAME} \
+        --set-env-vars SFTP_PASSWORD=${_SFTP_PASSWORD} \
+        --set-env-vars SURVEY_SOURCE_PATH=${_SURVEY_SOURCE_PATH} \
+        --set-env-vars INSTRUMENT_DESTINATION_PATH=${_INSTRUMENT_DESTINATION_PATH} \
+        --set-env-vars INSTRUMENT_SOURCE_PATH="" \
+        --set-env-vars NISRA_BUCKET_NAME=${_NISRA_BUCKET_NAME}
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Slack Notify"

@@ -7,7 +7,7 @@ import pysftp
 import requests
 from paramiko import SSHException
 
-from config_local import *
+from config import *
 from util.service_logging import log
 from flask import Flask
 from GoogleStorage import GoogleStorage
@@ -171,3 +171,6 @@ def send_request_to_API(instrument_name):
 def internal_error(error):
     log.exception("Exception occurred", error)
     return "Exception occurred", 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

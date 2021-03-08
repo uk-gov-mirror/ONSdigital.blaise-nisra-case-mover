@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+venv/*
+key.json
+tmp/*
+
+# Python pycache:
+__pycache__/
+# Ignored by the build system
+/setup.cfg
+
+tests
+features
+README.md
+Dockerfile
+config_local.py
