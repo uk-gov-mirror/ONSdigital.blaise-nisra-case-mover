@@ -6,6 +6,7 @@ import re
 import pybase64
 import pysftp
 import requests
+import googlecloudprofiler
 from flask import Flask
 from paramiko import SSHException
 
@@ -20,6 +21,14 @@ googleStorage = GoogleStorage(bucket_name, log)
 
 @app.route("/")
 def main():
+    try:
+        googlecloudprofiler.start(
+            service='nisra-case-mover',
+            service_version='1.0.1',
+            verbose=3
+        )
+    except (ValueError, NotImplementedError) as exc:
+        print(exc)
     log.info("Application started")
     log.info(f"survey_source_path - {survey_source_path}")
     log.info(f"bucket_name - {bucket_name}")
