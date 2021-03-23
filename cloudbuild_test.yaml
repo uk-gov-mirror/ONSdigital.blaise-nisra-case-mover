@@ -21,6 +21,7 @@ steps:
         echo "----------------------------------------"
         apt-get install python3-pip -y
         python3 -m pip install --upgrade setuptools
+        python3 -m pip install googlecloudprofiler
         python3 -m pip install -r requirements.txt
         export SURVEY_SOURCE_PATH='ONS/OPN/'
         export NISRA_BUCKET_NAME=${_NISRA_BUCKET_NAME}-test
