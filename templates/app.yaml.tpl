@@ -25,3 +25,4 @@ handlers:
   script: auto
   secure: always
   redirect_http_response_code: 301
+  login: admin
